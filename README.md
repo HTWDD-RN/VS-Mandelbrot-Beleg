@@ -37,25 +37,26 @@ start "Client" cmd /k "java Client localhost 5000"
 ```
 mandelbrot-verteiltes-system/
 ├── README.md
-├── ARCHITEKTUR.png
 ├── Dokumentation/
 │   ├── Nutzung_und_Aufbau.adoc
-│   ├── Architektur.adoc
+│   ├── Architektur
+|        ├── ARCHITEKTUR.png
+|        ├── Architektur.adoc
 │   └── Verteilungsgewinn/
 │       ├── Messungen.adoc
+|       ├── messwerte/
+│          ├── lokal/*.txt
+│          └── verteilt/*.txt
 │       ├── Diagramme.adoc
 │       ├── Interpretation.adoc
 │       └── Diagramme/*.png
-├── messwerte/
-│   ├── lokal/*.txt
-│   └── verteilt/*.txt
-├── src/
+├── mandelbrot-project/
 │   ├── client/
 │   ├── master/
 │   └── worker/
-├── startskripte/
-│   ├── start.bat
-│   └── compile.bat
+|   └── startskripte/
+│     ├── start.bat
+│     └── compile.bat
 ```
 
 ## Hinweise
