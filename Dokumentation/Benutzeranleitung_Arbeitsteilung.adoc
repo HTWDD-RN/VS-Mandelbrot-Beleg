@@ -1,0 +1,44 @@
+= Vorgehen
+:icons: font
+:revdate: 2025-06
+
+== Bedienung der GUI
+
+* *Bildgröße*: Breite × Höhe in Pixeln
+* *Zoompunkt*: Komplexe Koordinate Cr / Ci
+* *Zoom-Runden*: Anzahl der Zoom-Schritte
+* *Threads*: Anzahl lokaler Threads pro Block
+* *Layers*: Vertikale Aufteilung
+* *Start/Pause/Reset*: Steuerung der Berechnung
+
+== Teamaufteilung
+
+[options="header", cols="1,3"]
+|===
+| Person   | Aufgabenbereiche
+| Martin_lee Schubert | - GUI: `ApfelView`, `ApfelPresenter`, `ApfelModel` +
+            - Zeitmessung & Analyse +
+            - Präsentation & Doku (Ergebnisse)
+| Abdallah Alherani | - Master & Worker-Logik +
+            - Round-Robin-Verteilung +
+            - Präsentation & Doku (Architektur)
+|===
+
+== Start & Ausführung
+
+[source,shell]
+----
+cd mandelbrot_project
+javac *.java
+
+REM Starte Master
+start "Master" cmd /k "java Master 5000"
+
+REM Starte mehrere Worker
+start "Worker1" cmd /k "java Worker localhost 5000"
+start "Worker2" cmd /k "java Worker localhost 5000"
+start "Worker3" cmd /k "java Worker localhost 5000"
+
+REM Starte Client
+start "Client" cmd /k "java Client localhost 5000"
+----
