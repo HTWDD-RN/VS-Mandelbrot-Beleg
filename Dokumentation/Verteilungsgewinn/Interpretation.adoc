@@ -20,14 +20,6 @@ Das bedeutet: Obwohl der Speedup-Wert (Lokal / Verteilt) insgesamt größer wird
 
 Der *Grenznutzen der Parallelisierung* sinkt, sobald ein hoher Effizienzgrad erreicht wurde – ein typischer Verlauf in der Parallelverarbeitung.
 
-==== Messumgebung
-
-Die Messungen wurden *nicht auf mehreren echten Rechnern im Labor*, sondern auf *einem einzelnen PC mit mehreren Worker-Instanzen* durchgeführt.
-
-Das Projekt wurde dabei über *mehrere parallele Konsolenfenster* gestartet (Master + 3 Worker + Client).  
-Dadurch konnte die RMI-Logik getestet werden – allerdings ohne echte Netzwerkverzögerungen oder Hardwareverteilung.
-
-
 === Visuelle Darstellung des Verteilungsgewinns
 
 Die folgenden Diagramme veranschaulichen die Messergebnisse:
@@ -41,6 +33,12 @@ _Liniendiagramm: Speedup-Faktor über die Zoom-Layer_
 image::../Diagramme/diagramm3_differenz.png[width=600,align=center]
 _Zeitersparnis pro Layer (Differenz: Lokal − Verteilt)_
 
+==== Messumgebung
+
+Die Messungen wurden *nicht auf mehreren echten Rechnern im Labor*, sondern auf *einem einzelnen PC mit mehreren Worker-Instanzen* durchgeführt.
+
+Das Projekt wurde dabei über *mehrere parallele Konsolenfenster* gestartet (Master + 4 Worker + Client).  
+Dadurch konnte die RMI-Logik getestet werden – allerdings ohne echte Netzwerkverzögerungen oder Hardwareverteilung.
 
 [NOTE]
 ====
