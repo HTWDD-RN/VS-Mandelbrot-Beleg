@@ -1,0 +1,72 @@
+= Systemarchitektur
+:revdate: 2025-06
+:icons: font
+
+== Architekturübersicht
+
+Das Projekt folgt dem klassischen Entwurf eines verteilten Systems auf Basis des **Client–Master–Worker-Modells**, umgesetzt mit **Java RMI (Remote Method Invocation)**.
+
+Der Client steuert den Ablauf über eine grafische Benutzeroberfläche (Swing), der Master koordiniert die Verteilung der Rechenaufgaben, und die Worker übernehmen die eigentliche Berechnung einzelner Bildblöcke der Mandelbrotmenge.
+
+image::../ARCHITEKTUR.png[width=600,align=center]
+
+== Kommunikationsfluss
+
+[cols="1,3"]
+|===
+| *Client → Master*   | Der Client (über `ApfelModel`) ruft `bild_rechnen(...)` auf dem Master auf. Dabei werden alle Parameter wie Iterationen, Zoombereich, Bildgröße etc. übergeben.
+| *Worker → Master*   | Jeder Worker meldet sich nach dem Start automatisch per `worker_anmelden(WorkerInterface w)` beim Master an und wird dort in einer Liste registriert.
+| *Master → Worker*   | Der Master verteilt die zu berechnenden Bildblöcke an die Worker über `computeBlock(...)`. Die Verteilung erfolgt dabei im Round-Robin-Verfahren.
+| *Master → Client*   | Die Worker geben die Ergebnisse als `Color[][]` zurück. Der Master sammelt diese Blöcke und gibt sie vollständig an den Client zurück, der sie zu einem `BufferedImage` zusammensetzt.
+|===
+
+== Komponentenübersicht
+
+=== Client-Komponente
+
+Besteht aus drei Modulen (MVC-artig aufgebaut):
+
+* `ApfelView`  
+  Swing-basierte GUI mit Zeichenpanel, Slider, Eingabefeldern und Buttons. Zeigt das aktuelle Mandelbrotbild sowie Status- und Zeitinformationen.
+
+* `ApfelPresenter`  
+  Vermittelt zwischen Benutzerinteraktion und Logik. Initialisiert Zoom-Parameter, startet die Zoom-Schleife (SwingWorker) und delegiert die Berechnung an das Model.
+
+* `ApfelModel`  
+  Zerteilt das Bild vertikal in mehrere „Layer“ (Streifen) und ruft für jeden Teilbereich `master.computeBlock(...)` auf. Verwendet lokal einen `ExecutorService` zur parallelen Bearbeitung der Blöcke und kombiniert die Ergebnisse zum Gesamtbild.
+
+=== Master-Komponente
+
+* `Master`  
+  Initialisiert die RMI-Registry und exportiert sich selbst als `UnicastRemoteObject`. Hält eine Liste aller registrierten Worker (Stubs). Bei einem Aufruf von `bild_rechnen(...)` teilt der Master das Bild in Blöcke und verteilt sie per Round-Robin auf die verfügbaren Worker. Die Ergebnisse der Worker werden gesammelt und an den Client zurückgegeben.
+
+* `MasterInterface`  
+  RMI-Interface mit den Methoden:
+  - `bild_rechnen(...)`: zentrale Verteilungslogik
+  - `worker_anmelden(...)`: zur Registrierung der Worker
+
+=== Worker-Komponente
+
+* `Worker`  
+  Verbindet sich per RMI mit dem Master und meldet sich dort selbstständig an. Exportiert sich ebenfalls als `UnicastRemoteObject` mit dem Interface `WorkerInterface`. Verarbeitet eingehende `computeBlock(...)`-Aufrufe des Masters, indem er den zugewiesenen Block der Mandelbrotmenge Pixel für Pixel berechnet.
+
+[NOTE]
+====
+Im Gegensatz zum Client-Modul (`ApfelModel`) verwendet der `Worker` **keinen ExecutorService** zur parallelen Bearbeitung. Jeder zugewiesene Bildblock wird aktuell sequentiell berechnet.
+
+Eine spätere Erweiterung um lokale Thread-Pools wäre möglich.
+====
+
+* `WorkerInterface`  
+  Definiert die RMI-Methode `computeBlock(...)`, die vom Master für jeden zu berechnenden Bildabschnitt aufgerufen wird.
+
+== Verteilungsstrategie
+
+* Die horizontale Layer-Aufteilung des Bildes durch den Client (`ApfelModel`) ermöglicht eine flexible Parallelisierung.
+* Die Blockzuweisung vom Master zu den Workern erfolgt nach dem Prinzip **Round-Robin** – der erste Block geht an Worker 1, der zweite an Worker 2 usw., danach beginnt es erneut.
+* Die Synchronisation erfolgt implizit über das Einsammeln der Ergebnisse; der Client wartet, bis alle Blöcke eingetroffen sind.
+
+[NOTE]
+====
+Diese Architektur ermöglicht sowohl lokale als auch verteilte Ausführung – je nachdem, ob die Worker-Prozesse auf demselben oder auf verschiedenen Rechnern gestartet werden.
+====
