@@ -24,7 +24,7 @@ Der *Grenznutzen der Parallelisierung* sinkt, sobald ein hoher Effizienzgrad err
 
 Die folgenden Diagramme veranschaulichen die Messergebnisse:
 
-image::Dokumentation/Verteilungsgewinn/Diagramme/diagramm1_balken_lokal_vs_verteilt.png[width=600,align=center]
+image::../Diagramme/diagramm1_balken_lokal_vs_verteilt.png[width=600,align=center]
 _Balkendiagramm: Vergleich der Laufzeit (lokal vs. verteilt)_
 
 image::../Diagramme/diagramm2_speedup.png[width=600,align=center]
