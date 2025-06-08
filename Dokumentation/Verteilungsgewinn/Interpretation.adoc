@@ -1,0 +1,33 @@
+=== Interpretation der Ergebnisse
+
+Die Tabelle zeigt einen klaren Trend:  
+Während die verteilte Ausführung zu Beginn (Layer 1) sogar *langsamer* war als die lokale, nimmt der Vorteil mit wachsendem Rechenaufwand deutlich zu:
+
+- Ab *Layer 2* wird ein Verteilungsgewinn sichtbar.
+- Ab *Layer 4* übersteigt der Speedup den Faktor *2.0*.
+- In den letzten Layers (*8–10*) liegt der Gewinn bei über *4.7 bis 5.5×* gegenüber der lokalen Variante.
+
+Dies bestätigt, dass *Verteilung bei rechenintensiven Aufgaben* wie der Mandelbrot-Berechnung deutlich effektiver ist – besonders bei höherer Zoomtiefe, mehr Iterationen und größerer Bildauflösung.
+
+==== Abnehmender Verteilungsgewinn
+
+Außerdem ist erkennbar, dass der Verteilungsgewinn zwar mit jedem Layer weiter steigt, *aber der zusätzliche Nutzen pro Layer abnimmt*.  
+Das bedeutet: Obwohl der Speedup-Wert (Lokal / Verteilt) insgesamt größer wird, *flacht die Kurve ab*. Dies ist ein typischer Effekt bei verteilten Systemen und ergibt sich aus Overheadkosten durch:
+
+- Netzwerkkommunikation
+- Blockkoordination
+- Rückgabe der Ergebnisse
+
+Der *Grenznutzen der Parallelisierung* sinkt, sobald ein hoher Effizienzgrad erreicht wurde – ein typischer Verlauf in der Parallelverarbeitung.
+
+==== Messumgebung
+
+Die Messungen wurden *nicht auf mehreren echten Rechnern im Labor*, sondern auf *einem einzelnen PC mit mehreren Worker-Instanzen* durchgeführt.
+
+Das Projekt wurde dabei über *mehrere parallele Konsolenfenster* gestartet (Master + 4 Worker + Client).  
+Dadurch konnte die RMI-Logik getestet werden – allerdings ohne echte Netzwerkverzögerungen oder Hardwareverteilung.
+
+[NOTE]
+====
+In einer realen Laborumgebung mit mehreren physischen Maschinen wäre ein *noch größerer Verteilungsgewinn* zu erwarten – durch echte Parallelverarbeitung auf getrennten CPU-Kernen.
+====
